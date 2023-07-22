@@ -36,6 +36,11 @@ func main() {
 		),
 	)
 
+	v1router := chi.NewRouter()
+	v1router.Get("/healthz", handlerReadiness)
+
+	router.Mount("/v1", v1router)
+
 	srv := &http.Server{Handler: router, Addr: ":" + portString}
 	log.Printf("Server is starting at Port: %v", portString)
 	err := srv.ListenAndServe()
