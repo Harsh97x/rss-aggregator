@@ -35,13 +35,9 @@ func main() {
 	if err != nil {
 		log.Fatal("can't connect to database:", err)
 	}
-
-	queries := database.New(conn)
-	if err != nil {
-		log.Fatal("can't connect to db connections:", err)
+	apiCfg := apiConfig{
+		DB: database.New(conn),
 	}
-
-	apiCfg := apiConfig{DB: queries}
 
 	router := chi.NewRouter()
 
@@ -63,6 +59,7 @@ func main() {
 	v1router := chi.NewRouter()
 	v1router.Get("/healthz", handlerReadiness)
 	v1router.Get("/err", handlerErr)
+	v1router.Post("/user", apiCfg.handlerCreateUser)
 
 	router.Mount("/v1", v1router)
 
