@@ -10,7 +10,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	"github.com/joho/godotenv"
-	_ "github.com/lib/pg"
+	_ "github.com/lib/pq"
 
 	"github.com/harsh97x/rss-aggregator/internal/database"
 )
@@ -31,7 +31,7 @@ func main() {
 	}
 	fmt.Println("DB_URL", dbURL)
 
-	conn, err := sql.Open("postgresql", dbURL)
+	conn, err := sql.Open("postgres", dbURL)
 	if err != nil {
 		log.Fatal("can't connect to database:", err)
 	}
@@ -59,13 +59,13 @@ func main() {
 	v1router := chi.NewRouter()
 	v1router.Get("/healthz", handlerReadiness)
 	v1router.Get("/err", handlerErr)
-	v1router.Post("/user", apiCfg.handlerCreateUser)
+	v1router.Post("/users", apiCfg.handlerCreateUser)
 
 	router.Mount("/v1", v1router)
 
 	srv := &http.Server{Handler: router, Addr: ":" + portString}
 	log.Printf("Server is starting at Port: %v", portString)
-	err := srv.ListenAndServe()
+	err = srv.ListenAndServe()
 	if err != nil {
 		log.Fatal(err)
 	}
