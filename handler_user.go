@@ -5,8 +5,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/bootdotdev/projects/createusers/internal/database"
 	"github.com/google/uuid"
+
+	"github.com/harsh97x/rss-aggregator/internal/database"
 )
 
 func (cfg *apiConfig) handlerUsersCreate(w http.ResponseWriter, r *http.Request) {
