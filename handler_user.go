@@ -2,11 +2,13 @@ package main
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 
 	"github.com/google/uuid"
 
+	"github.com/harsh97x/rss-aggregator/internal/auth"
 	"github.com/harsh97x/rss-aggregator/internal/database"
 )
 
@@ -29,7 +31,24 @@ func (cfg *apiConfig) handlerUsersCreate(w http.ResponseWriter, r *http.Request)
 		Name:      params.Name,
 	})
 	if err != nil {
+		log.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Couldn't create user")
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, databaseUserToUser(user))
+}
+
+func (cfg *apiConfig) handlerUsersGet(w http.ResponseWriter, r *http.Request) {
+	apiKey, err := auth.GetAPIKey(r.Header)
+	if err != nil {
+		respondWithError(w, http.StatusUnauthorized, "Couldn't find api key")
+		return
+	}
+
+	user, err := cfg.DB.GetUserByAPIKey(r.Context(), apiKey)
+	if err != nil {
+		respondWithError(w, http.StatusNotFound, "Couldn't get user")
 		return
 	}
 
