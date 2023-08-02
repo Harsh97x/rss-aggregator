@@ -41,6 +41,8 @@ func main() {
 		DB: dbQueries,
 	}
 
+  go startScraping(db *database.Queries, concurrency int, timeBetweenRequest time.Duration)
+
 	router := chi.NewRouter()
 
 	router.Use(cors.Handler(cors.Options{
