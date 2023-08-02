@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
@@ -31,17 +32,17 @@ func main() {
 		log.Fatal("DATABASE_URL environment variable is not set")
 	}
 
-	db, err := sql.Open("postgres", dbURL)
+	conn, err := sql.Open("postgres", dbURL)
 	if err != nil {
 		log.Fatal(err)
 	}
-	dbQueries := database.New(db)
+	db := database.New(conn)
 
 	apiCfg := apiConfig{
-		DB: dbQueries,
+		DB: db,
 	}
 
-  go startScraping(db *database.Queries, concurrency int, timeBetweenRequest time.Duration)
+	go startScraping(db, 10, time.Minute)
 
 	router := chi.NewRouter()
 
